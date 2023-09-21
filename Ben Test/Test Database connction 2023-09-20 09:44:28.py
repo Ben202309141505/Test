@@ -52,4 +52,5 @@ display(remote_table)
 
 # COMMAND ----------
 
-# MAGIC %fs ls
+#%fs mkdirs /tmp/config/
+%fs ls /tmp/
