@@ -27,22 +27,23 @@ display(remote_table)
 
 # COMMAND ----------
 
-pwdstring = dbutils.secrets.get(scope="ddpcn-key-vault-secrets", key="dwhchinaadmin-secret")
-
 driver = "com.microsoft.sqlserver.jdbc.SQLServerDriver"
 
-connect_string2 = dbutils.secrets.get(scope="ddpcn-key-vault-secrets", key="dwhchinaadmin-connect")
+pwdstring = dbutils.secrets.get(scope="ddpcn-key-vault-secrets", key="dwhchinaadmin-secret")
 
-connect_string2.format(password=pwdstring)
+connection_string = dbutils.secrets.get(scope="ddpcn-key-vault-secrets", key="connection-dwhchina-secret")
 
-connect_string = "jdbc:sqlserver://mssql-ddpcn-dev02-chinaeast2.database.chinacloudapi.cn:1433;database=sqldb-ddpcn-dev01-chinaeast2;user=dwhchinaadmin;password={password}".format(password=pwdstring)
+connection_string = connection_string.replace("{password}",pwdstring)
 
-table = "[dw_sfe].[Dim_Product]"
+#for char in connection_string:
+#    print(char, end="\u200B")
+
+table = "[dw_sfe].[Dim_Position]"
 
 remote_table = (spark.read
   .format("jdbc")
   .option("driver", driver)
-  .option("url", connect_string)
+  .option("url", connection_string)
   .option("dbtable", table)
   .load()
 )
